@@ -258,3 +258,19 @@ Update-Database AddToDoDates
 
 ```
 Here `AddToDates` is the name of the previous migration. and the address field that we added to the contact model will be no more in the database.
+
+
+## Creating Models and Connect via Relationships
+### Restricting Length
+Restricting the length of the string values, It is very easy. 
+
+>From Entity Framework prospective a model is an entity. The word entity comes from the domain driven desing. An entity is 
+a mutable object whose values can change but its identity cannot change.
+
+Attributes are present in C# programming language for a long time. It comes before a method, a field or a class, provide extra 
+information to the run-time. 
+
+One way is to enhance entities is by using attributes and second way is through the Fluent-API.
+Fluent API is not an actual alternative to the attributes methods that means they are not mutually exculsive.
+By using fluent API we can also declare alternative keys.
+
