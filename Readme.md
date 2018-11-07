@@ -153,3 +153,40 @@ If one of them fails you database fail to sync with source.
 - Edit database without losing data.
 - Provide a way to Roll Back to previous version.
 - It is a version control for your database.
+
+### First Migration
+We will use the `Package Manager Console` to execute the migrations.
+>Make sure to delete the database before applying migrations
+
+Enable migrations (optional)
+```sh
+Enable-Migrations
+```
+
+add a migration 
+```sh
+Add-Migration migration_Name 
+```
+For example
+```sh
+Add-Migration initial
+```
+
+Update the database (Write the changes to the database)
+```sh
+Update-Database
+```
+
+
+> If you get an eror during the first migration try to install the following packages
+```sh
+<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.4">
+```
+
+Each migration is made of two method Up and down.
+The up method includes the changes that will be added the db. The down method include what can i roll back after the reset.
+We have the DbContextSnapshout class that is essentail should not be modified by the user.
+
+
