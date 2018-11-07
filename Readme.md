@@ -130,3 +130,10 @@ the using rapper ensures that the service will be disposed when this part of cod
 Now you can run the project to see if this work.
 
 > Notice: Incase of error make sure to check your DatabaseContext class constructor to be `public`. If it is not public dependency injection cannot initialize it.
+
+## SQL Server Object Explorer
+Inside the visual studio, from here you can see you local db and find that the database is created. As you can see Entity Framework
+has made the Id field as primary key by convenction. 
+
+>Note: In real life senarios you will have to use migrations. Generally It is not a good idea to delete the whole database 
+to change its structure
