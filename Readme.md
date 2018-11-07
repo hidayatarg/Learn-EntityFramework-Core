@@ -8,14 +8,14 @@ Here We connected to the database via the database string that is placed in the 
 ```sh
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=EfCoreWebApp;Trusted_Connection=True;MultipleActiveResultSets=True"
+	"DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=EfCoreWebApp;Trusted_Connection=True;MultipleActiveResultSets=True"
   },
 
   "Logging": {
-    "IncludeScopes": false,
-    "LogLevel": {
-      "Default": "Warning"
-    }
+	"IncludeScopes": false,
+	"LogLevel": {
+	  "Default": "Warning"
+	}
   }
 }
 ```
@@ -29,9 +29,9 @@ Contact class
 ```csharp
 public class Contact: BaseEntity
 {
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Email { get; set; }
+	public string FirstName { get; set; }
+	public string LastName { get; set; }
+	public string Email { get; set; }
 }
 
 ```
@@ -39,8 +39,8 @@ ToDo class
 ```csharp
 public class ToDo:BaseEntity
 {
-    public string Text { get; set; }
-    public bool Completed { get; set; }
+	public string Text { get; set; }
+	public bool Completed { get; set; }
 }
 
 ```
@@ -48,20 +48,20 @@ BaseEntity Class
 ```csharp
 public class BaseEntity
 {
-    public int Id { get; set; }
+	public int Id { get; set; }
 }
 ```
 in the AppDbContext class the two lines with Dbset will tell entity framework to generate two tables
 ```csharp
 public class AppDbContext:DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
-    {
-            
-    }
+	public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
+	{
+			
+	}
 
-    public DbSet<Contact> Contacts { get; set; }
-    public DbSet<ToDo> ToDos { get; set; }
+	public DbSet<Contact> Contacts { get; set; }
+	public DbSet<ToDo> ToDos { get; set; }
 }
 ```
 
@@ -74,9 +74,9 @@ using Microsoft.EntityFrameworkCore.Extensions;
  //And the Register our DbContext
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-    services.AddMvc();
+	services.AddDbContext<AppDbContext>(options =>
+		options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+	services.AddMvc();
 }
 ```
 Now we will create a static class `DbInit` to seed some fake data to the database. Firstly we will check if the database is created or not. If the database
@@ -85,43 +85,43 @@ at the end we need to save the changes to the database synchronously or unsynchr
 ```csharp
 public static class DbInit
 {
-    public static void InitializeWithFakeData(AppDbContext context)
-    {
-        // Makes sure that database is created
-        // If it is created it does nothing (If it is not created it is going to create a database)
-        context.Database.EnsureCreated();
+	public static void InitializeWithFakeData(AppDbContext context)
+	{
+		// Makes sure that database is created
+		// If it is created it does nothing (If it is not created it is going to create a database)
+		context.Database.EnsureCreated();
 
-        // Check if the context table contain any data If does not add the fake data
-        if (!context.Contacts.Any())
-        {
-            context.Contacts.Add(new Contact() {FirstName = "Ahmed", LastName = "Smith", Email = "abc@abc.com"});
-            context.Contacts.Add(new Contact() {FirstName = "John", LastName = "Smith", Email = "dbc@abc.com"});
-        }
+		// Check if the context table contain any data If does not add the fake data
+		if (!context.Contacts.Any())
+		{
+			context.Contacts.Add(new Contact() {FirstName = "Ahmed", LastName = "Smith", Email = "abc@abc.com"});
+			context.Contacts.Add(new Contact() {FirstName = "John", LastName = "Smith", Email = "dbc@abc.com"});
+		}
 
-        if (!context.ToDos.Any())
-        {
-            context.ToDos.Add(new ToDo() {Text = "Wash the car", Completed = true});
-        }
+		if (!context.ToDos.Any())
+		{
+			context.ToDos.Add(new ToDo() {Text = "Wash the car", Completed = true});
+		}
 
-        context.SaveChanges();
-    }
+		context.SaveChanges();
+	}
 }
 ```
 Now we  need to call this class. We will remove the `BuildWebHost(args).Run();` method and call the host. 
 ```csharp
 public static void Main(string[] args)
 {
-    var host = BuildWebHost(args);
-    using (var newScope=host.Services.CreateScope())
-    {
-        // Register the context class
-        var context = newScope.ServiceProvider.GetRequiredService<AppDbContext>();
-        // Call DbInit 
-        DbInit.InitializeWithFakeData(context);
-    }
+	var host = BuildWebHost(args);
+	using (var newScope=host.Services.CreateScope())
+	{
+		// Register the context class
+		var context = newScope.ServiceProvider.GetRequiredService<AppDbContext>();
+		// Call DbInit 
+		DbInit.InitializeWithFakeData(context);
+	}
 
-    //* NotFORGET
-    host.Run();
+	//* NotFORGET
+	host.Run();
 
 }
 ```
@@ -135,5 +135,20 @@ Now you can run the project to see if this work.
 Inside the visual studio, from here you can see you local db and find that the database is created. As you can see Entity Framework
 has made the Id field as primary key by convenction. 
 
->Note: In real life senarios you will have to use migrations. Generally It is not a good idea to delete the whole database 
+>Note: In real life senarios you will have to use migrations. Generally It is not a good idea to delete the whole database  
 to change its structure
+
+## Migrations and Why we need them
+It is not efficient to drop the database and all its data everytime you need to make a change. Forexample if we have to add the phone number
+field to the contact table we need to drop the database and start the application so it could create the database for us. In the production you cannot drop a database
+each time when you add extra fields to it. `The only way will be changing the production database manually by SQL commands (Which is a bad idea).` 
+
+If you manually update the production database using SQL command, you have to update the models inside the program manually too.
+If one of them fails you database fail to sync with source.
+### What are Migrations
+	-Migrations are files generated by EF Core based on your models.
+	-Reads your model and created files according to it.
+	-Migrations keep the models and the database in sync.
+	-Edit database without losing data.
+	-Provide a way to Roll Back to previous version.
+	-It is a version control for your database.
