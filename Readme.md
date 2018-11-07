@@ -227,3 +227,34 @@ public class ToDo:BaseEntity
 }
 ```
 Add-migations and update the database using the commands provided.
+
+
+### Rolling Back
+we have two roll back
+- Rolling Back an unapplied migration
+- Rolling Back an applied migration
+
+#### Removing an Unapplied Migration
+It happens when we have run the add-migration command and we have not run the update-database command.
+
+For example: in the contact model we add `public int adress {get; set;}` and we run the `add-migration`. It will update
+our DbContextSnapshot. In this case we want to change the int to string but we have commited a migration we need to roll back that migration
+So,
+
+```sh
+Remove-migration
+```
+this command will remove the previous migration (migration was not applied to the database).
+
+
+#### Removing an Applied Migration
+A migration that has been applied to the database. So any changes we have applied are in the database.
+
+For example: we added the address to the contact model and we applied the changes to the database.
+
+To revert to the old migrations 
+```sh
+Update-Database AddToDoDates
+
+```
+Here `AddToDates` is the name of the previous migration. and the address field that we added to the contact model will be no more in the database.
