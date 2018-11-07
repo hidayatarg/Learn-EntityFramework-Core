@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using EfCoreWebApp.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace EfCoreWebApp
@@ -14,7 +16,18 @@ namespace EfCoreWebApp
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            var host = BuildWebHost(args);
+            using (var newScope=host.Services.CreateScope())
+            {
+                // Register the context class
+                var context = newScope.ServiceProvider.GetRequiredService<AppDbContext>();
+                // Call DbInit 
+                DbInit.InitializeWithFakeData(context);
+            }
+
+            //* NotFORGET
+            host.Run();
+
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
