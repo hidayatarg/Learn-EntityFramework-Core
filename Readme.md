@@ -190,3 +190,40 @@ The up method includes the changes that will be added the db. The down method in
 We have the DbContextSnapshout class that is essentail should not be modified by the user.
 
 
+#### Updating a Table
+We will update a table in an existing database.
+We want to add the phone number to the contact model.
+```csharp
+public class Contact: BaseEntity
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+    public string PhoneNumber { get; set; }
+}
+```
+
+```sh
+Add-migration AddContactPhoneNumber
+update-database
+```
+we will Run from package manager console. It is a good idea to use descriptive names.
+
+In DbcontextSnapshout you can see the entityframework has added a new property. `   b.Property<string>("PhoneNumber");`
+
+
+#### Adding Multiple changes
+```csharp
+public class ToDo:BaseEntity
+{
+    [Required]
+    public string Text { get; set; }
+    [Required]
+    public bool Completed { get; set; }
+    [Required]
+    public DateTime CreatedAt { get; set; }
+      
+    public DateTime CompletedAt { get; set; }        
+}
+```
+Add-migations and update the database using the commands provided.
