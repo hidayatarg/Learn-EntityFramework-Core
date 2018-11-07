@@ -274,3 +274,53 @@ One way is to enhance entities is by using attributes and second way is through 
 Fluent API is not an actual alternative to the attributes methods that means they are not mutually exculsive.
 By using fluent API we can also declare alternative keys.
 
+We Created a new project in the solution this going to be a BookStoreApp
+We have a book Model
+```csharp
+public class Book
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public string Isbn { get; set; }
+}
+```
+we installed the following packages from NuGet
+```sh
+<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.4">
+```
+Run the commands
+```sh
+Add-migration InitialMigration
+Update-Database
+```
+
+#### Restriction
+We want to restrict the Book.Title to MaxLength of 32 characters. 
+These attributes are in `using System.ComponentModel.DataAnnotations;` namespace. Don't forget to add.
+```csharp
+public class Book
+{
+    public int Id { get; set; }
+    [MaxLength(32)]
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public string Isbn { get; set; }
+}
+```
+Apply it to the database by add-migration and update-database. 
+After, applying the update-database you can see that title is of type nvarchar of 32 characters.
+
+We copy the OnModelCreating Method from the DbContext Defination method by ctrl+click on the dbcontext
+```csharp
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Book>().Property(b => b.Isbn).HasMaxLength(10);
+}
+```
+This way we are restricting the Isbn Length to be 10 characters. and add-migration then run the update-database.
+You can see have restricted the `Isbn` to 10 characters.
+
+Length Restriction is a good practice. Length Restriction is also helpful for validation.
