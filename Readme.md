@@ -79,7 +79,8 @@ public void ConfigureServices(IServiceCollection services)
 	services.AddMvc();
 }
 ```
-Now we will create a static class `DbInit` to seed some fake data to the database. Firstly we will check if the database is created or not. If the database
+## Database Seeding
+we will create a static class `DbInit` to seed some fake data to the database. Firstly we will check if the database is created or not. If the database
 is not created it will do the seedings.
 at the end we need to save the changes to the database synchronously or unsynchronusly. 
 ```csharp
